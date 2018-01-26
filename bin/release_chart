@@ -10,7 +10,7 @@ check() { command -v "$1" >/dev/null 2>&1 || err "$1 utility is requiered!"; }
 # process custome variables
 processCustomVals() {
 	local resultedArgs=""
-	
+
 	local vars=$(env | awk -F '=' '{print $1}' | grep -i "^customFile_")
 	for var in $vars
 	do
@@ -81,6 +81,14 @@ if [ -z "$RELEASE_NAME" ]; then
   exit 1
 fi
 release="${RELEASE_NAME}"
+
+if [ -n "$KUBE_CONFIG" ]; then
+  msg "Using passed .kube/config file"
+  mkdir -p ~/.kube
+  echo -n "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+  msg "Skip TLS verify for K8s cluster"
+  kubectl config set-cluster $(kubectl config current-context) --insecure-skip-tls-verify=true
+fi
 
 if [ -z "$KUBE_CONTEXT" ]; then
   err "Please, set Kubernetes context. Use name from Codefresh Integrations page."
