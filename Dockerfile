@@ -1,5 +1,5 @@
 #------ helm ----
-ARG HELM_VERSION=2.8.1
+ARG HELM_VERSION=2.8.2
 FROM dtzar/helm-kubectl:${HELM_VERSION} as helm
 
 #------- Deployer ------
